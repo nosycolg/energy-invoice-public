@@ -8,7 +8,12 @@ import type {
 
 const API_BASE = process.env.API_URL || 'http://localhost:3002';
 
-const NO_CACHE: RequestInit = { cache: 'no-store' };
+const API_KEY = process.env.API_KEY || '';
+
+const NO_CACHE: RequestInit = {
+  cache: 'no-store',
+  headers: { 'x-api-key': API_KEY },
+};
 
 export interface DashboardFilters {
   start?: string;

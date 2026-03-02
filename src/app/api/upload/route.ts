@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const API_BASE = process.env.API_URL || 'http://localhost:3002';
+const API_KEY = process.env.API_KEY || '';
 
 export async function POST(req: NextRequest) {
   let response: Response | undefined;
@@ -10,6 +11,7 @@ export async function POST(req: NextRequest) {
     response = await fetch(`${API_BASE}/upload`, {
       method: 'POST',
       body: formData,
+      headers: { 'x-api-key': API_KEY },
     });
 
     const text = await response.text();
