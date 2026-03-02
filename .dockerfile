@@ -1,38 +1,29 @@
-# ── Build ──────────────────────────────────────────────
-FROM node:20-alpine AS builder
+# Use uma imagem Node.js mais recente
+FROM node:20-alpine
 
+# Define o diretório de trabalho
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-RUN npm ci
+# Copia os arquivos de dependências
+COPY package.json pnpm-lock.yaml ./
+COPY tsconfig.json ./
 
-COPY tsconfig.json next.config.ts postcss.config.mjs tailwind.config.ts ./
-COPY src ./src/
+# Ativa pnpm via Corepack e instala dependências com lockfile
+RUN corepack enable && corepack prepare pnpm@9.15.9 --activate
+RUN pnpm install --frozen-lockfile
 
-# Variáveis necessárias em build-time
-ARG API_URL
-ARG API_KEY
-ENV API_URL=$API_URL
-ENV API_KEY=$API_KEY
+# Copia o restante dos arquivos do projeto
+COPY . .
 
-RUN npm run build
+# Build da aplicação
+RUN pnpm run build
 
-# ── Production ────────────────────────────────────────
-FROM node:20-alpine AS runner
-
-WORKDIR /app
-
+# Ambiente de produção e porta
 ENV NODE_ENV=production
+ENV PORT=4123
 
-# Next.js standalone output não é usado aqui; copiamos o build completo
-COPY --from=builder /app/package.json /app/package-lock.json* ./
-RUN npm ci --omit=dev
+# Expõe a porta 4123
+EXPOSE 4123
 
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/next.config.ts ./
-COPY --from=builder /app/postcss.config.mjs ./
-COPY --from=builder /app/tailwind.config.ts ./
-
-EXPOSE 3000
-
-CMD ["npm", "start"]
+# Comando para iniciar a aplicação Next.js
+CMD ["pnpm", "run", "start"]
