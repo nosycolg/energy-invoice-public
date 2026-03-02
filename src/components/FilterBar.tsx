@@ -70,7 +70,7 @@ export function FilterBar({ active }: { active: ActiveFilters }) {
   return (
     <div className="mb-8 w-full">
       <div className="flex flex-col xl:flex-row items-center gap-3 w-full bg-white rounded-3xl shadow-sm border border-slate-100 p-2 md:p-3">
-        <div className="flex-1 w-full flex flex-col md:flex-row items-center gap-2 relative">
+        <div className="flex-1 w-full flex flex-col sm:flex-row items-center gap-2 relative">
           <div
             className="flex-1 w-full flex items-center h-12 md:h-14 bg-slate-50 hover:bg-slate-100 rounded-2xl px-4 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500 border border-transparent transition-all overflow-hidden relative cursor-text"
             onClick={() => {
@@ -123,15 +123,15 @@ export function FilterBar({ active }: { active: ActiveFilters }) {
                     apply();
                   }
                 }}
-                placeholder="Buscar pelo Nº do Cliente..."
-                className="w-full bg-transparent outline-none text-sm md:text-base font-medium text-slate-900 placeholder:text-slate-400 placeholder:font-normal h-full"
+                placeholder="Buscar Nº do Cliente"
+                className="w-full min-w-0 bg-transparent outline-none text-sm md:text-base font-medium text-slate-900 placeholder:text-slate-400 placeholder:font-normal h-full"
               />
             )}
           </div>
 
           <div className="hidden md:block w-px h-8 bg-slate-200 mx-1"></div>
 
-          <div className="w-full md:w-auto relative">
+          <div className="w-full md:w-auto relative mt-2 md:mt-0">
             <MonthRangePicker
               start={start}
               end={end}
@@ -157,26 +157,28 @@ export function FilterBar({ active }: { active: ActiveFilters }) {
           </div>
 
           <div className="flex w-full md:w-auto items-center gap-2 shrink-0 md:ml-1 mt-2 md:mt-0">
-            {hasFilters && (
+            <div className="flex w-full sm:w-auto gap-2 flex-col sm:flex-row">
+              {hasFilters && (
+                <button
+                  onClick={clear}
+                  className="w-full sm:w-auto h-12 md:h-14 px-5 rounded-2xl text-sm font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors flex items-center justify-center border border-slate-200 md:border-transparent md:hover:border-slate-200"
+                >
+                  Limpar
+                </button>
+              )}
               <button
-                onClick={clear}
-                className="flex-1 md:flex-none h-12 md:h-14 px-5 rounded-2xl text-sm font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors flex items-center justify-center border border-slate-200 md:border-transparent md:hover:border-slate-200"
+                onClick={apply}
+                disabled={!!intervalError}
+                className={`w-full sm:w-auto h-12 md:h-14 px-8 rounded-2xl text-sm md:text-base font-bold text-white shadow-md transition-all 
+                  ${
+                    intervalError
+                      ? "cursor-not-allowed bg-slate-300 shadow-none"
+                      : "bg-emerald-600 shadow-emerald-600/20 hover:bg-emerald-700 hover:shadow-emerald-700/30 active:scale-95"
+                  }`}
               >
-                Limpar
+                Buscar
               </button>
-            )}
-            <button
-              onClick={apply}
-              disabled={!!intervalError}
-              className={`flex-1 md:flex-none h-12 md:h-14 px-8 rounded-2xl text-sm md:text-base font-bold text-white shadow-md transition-all 
-                ${
-                  intervalError
-                    ? "cursor-not-allowed bg-slate-300 shadow-none"
-                    : "bg-emerald-600 shadow-emerald-600/20 hover:bg-emerald-700 hover:shadow-emerald-700/30 active:scale-95"
-                }`}
-            >
-              Buscar
-            </button>
+            </div>
           </div>
         </div>
 
