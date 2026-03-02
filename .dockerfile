@@ -6,7 +6,6 @@ WORKDIR /app
 
 # Copia os arquivos de dependências
 COPY package.json pnpm-lock.yaml ./
-COPY tsconfig.json ./
 
 # Ativa pnpm via Corepack e instala dependências com lockfile
 RUN corepack enable && corepack prepare pnpm@9.15.9 --activate
@@ -15,12 +14,12 @@ RUN pnpm install --frozen-lockfile
 # Copia o restante dos arquivos do projeto
 COPY . .
 
-# Build da aplicação
-RUN pnpm run build
-
-# Ambiente de produção e porta
+# Ambiente de produção e porta (definidos antes do build)
 ENV NODE_ENV=production
 ENV PORT=4123
+
+# Build da aplicação
+RUN pnpm run build
 
 # Expõe a porta 4123
 EXPOSE 4123
